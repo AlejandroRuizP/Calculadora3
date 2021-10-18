@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     var isHexa = false
     var isDec = false
     var opRealizada = false  // me comprueba si se ha realizado una OP para resetear el TextView
+    var isPuntoVacio = true
 
 
 
@@ -61,6 +62,8 @@ class MainActivity : AppCompatActivity() {
                 DBoton.isEnabled = false
                 EBoton.isEnabled = false
                 FBoton.isEnabled = false
+                PuntoBoton.isEnabled = false
+
 
             }
 
@@ -87,8 +90,10 @@ class MainActivity : AppCompatActivity() {
                     DBoton.isEnabled = true
                     EBoton.isEnabled = true
                     FBoton.isEnabled = true
+                   PuntoBoton.isEnabled = false
 
-             }
+
+            }
 
             DecBoton.setOnClickListener {  //CONFIGRUACIÓN DE BOTONES PARA DECIMAL
                 ResultadoTextView.setText("")
@@ -112,6 +117,9 @@ class MainActivity : AppCompatActivity() {
                 DBoton.isEnabled = false
                 EBoton.isEnabled = false
                 FBoton.isEnabled = false
+                PuntoBoton.isEnabled = true
+
+
             }
 
 
@@ -140,10 +148,18 @@ class MainActivity : AppCompatActivity() {
     fun borrarEvent  (view: View) {
        ResultadoTextView.setText("")
        isNewOp = true
-   }
+        isPuntoVacio = true
+        PuntoBoton.isEnabled = true
+
+
+    }
      fun operatorEvent(view: View) {
          isNewOp = true
          oldNumber = ResultadoTextView.text.toString()
+         isPuntoVacio = true
+         PuntoBoton.isEnabled = true
+
+
 
          var buselect = view as Button
          when(buselect.id) {
@@ -164,27 +180,30 @@ class MainActivity : AppCompatActivity() {
          DECIMAL O HEXA, CALCULA EL RESULTADO Y DEVUELVE UN DOUBLE
 
         */
+          isPuntoVacio = true
+        PuntoBoton.isEnabled = true
 
-         var resultado =  0.0
-         var olnumber: Long
-         var newnumber: Long
+
+        var resultado =  0.0
+         var olnumber: Double
+         var newnumber: Double
 
         if (tipoOp == "binario") {
 
             var oldnumberBinarioConvertido = convertirBinarioToDecimal(num1.toLong())
             var newnumberBinarioConvertido = convertirBinarioToDecimal(num2.toLong())
-             olnumber = oldnumberBinarioConvertido.toLong()
-             newnumber = newnumberBinarioConvertido.toLong()
+             olnumber = oldnumberBinarioConvertido.toDouble()
+             newnumber = newnumberBinarioConvertido.toDouble()
 
 
         } else if (tipoOp == "hexa") {
-            olnumber = num1.toLong(radix = 16)  // me lo convierte a Decimal
-            newnumber =  num2.toLong(radix = 16)  // me lo convierte a Decimal
+            olnumber = num1.toLong(radix = 16).toDouble()  // me lo convierte a Decimal
+            newnumber =  num2.toLong(radix = 16).toDouble()  // me lo convierte a Decimal
 
 
         } else {
-            olnumber = num1.toLong()
-            newnumber = num2.toLong()
+            olnumber = num1.toDouble()
+            newnumber = num2.toDouble()
         }
         when (operacion) {
             "+" -> {resultado = olnumber.toDouble() + newnumber.toDouble()}
@@ -201,6 +220,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun igualEvent2(view: View) {
+        isPuntoVacio = true
+        PuntoBoton.isEnabled = true
 
         opRealizada = true
         var newnumber = ResultadoTextView.text.toString()
@@ -231,6 +252,9 @@ class MainActivity : AppCompatActivity() {
 
 
                 fun numberEvent(view: View) {
+                    if(isPuntoVacio == false) {
+                        PuntoBoton.isEnabled = false
+                    }
                     if (isNewOp or opRealizada) {
                         ResultadoTextView.setText("")
                         opRealizada = false
@@ -250,6 +274,13 @@ class MainActivity : AppCompatActivity() {
                         SieteBoton.id -> {buclick += "7"}
                         OchoBoton.id -> {buclick += "8"}
                         NueveBoton.id -> {buclick += "9"}
+                            PuntoBoton.id -> {  isPuntoVacio = false
+                                buclick += "."
+
+
+                            }
+
+
                         ABoton.id -> {buclick +="A"}
                         BBoton.id -> {buclick +="B"}
                         CBoton.id -> {buclick +="C"}
@@ -258,8 +289,12 @@ class MainActivity : AppCompatActivity() {
                         FBoton.id -> {buclick +="F"}
 
 
-                        PuntoBoton.id -> {buclick += "."}
+
                     }
+                    if(isPuntoVacio == false) {
+                        PuntoBoton.isEnabled = false
+                    }
+
 
                     ResultadoTextView.setText(buclick)
 
